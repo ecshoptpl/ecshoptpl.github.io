@@ -84,17 +84,54 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="模块的名字">模块的名字</h2>
-<p>一个drupal模块需要两个名字：</p>
-<p>&ensp;&ensp;<strong>给人看的名字:</strong>这个名字在.info 文件中用”name”去定义的，可以是一个或几个单词，单词的首字母大写，多个单词用空格分开。<br>&ensp;&ensp;<strong>机读名字:</strong>这个名字就是模块目录的名字，可以包括大、小写字母，数字和下划线。</p>
-<p>这两个名字应该尽量一致，比如“Administration menu”模块的机读名字就是“admin_menu”。</p>
+        <h1 id="目标">目标</h1>
+<p>我们的第一模块将实现以下功能：通过一个区块，展示出已经启用的模块列表。<br>我们将分三步实现这个完成这个模块：</p>
+<ul>
+<li>建立模块目录和模块文件</li>
+<li>建立区别</li>
+<li>利用drupal中的SimpleTest框架写一个自动测试</li>
+</ul>
+<p>按照敏捷开发的思想，我们应该先写测试，但是为了简单起见，我们采用了上面的流程.<br>不管怎么样，我们的目标是说明如何写一个模块，而不是演示具体的开发方法。我们这样做会更简单一些，这主要有两个原因：</p>
+<ul>
+<li>SimpleTest是我们这一章最简单的一部分，它的代码量是实际模块的两倍。</li>
+<li>我们在尝试写测试的时候，应该先熟悉这些在开发中会用到的api。</li>
+</ul>
+<p>在正规的模块开发过程中，你可以遵循TDD的开发流程，先写测试，然后写模块。但是我们现在以学习为主，所以还是按照我们上边的流程，先来写我们的模块。</p>
+<h1 id="写一个新模块">写一个新模块</h1>
+<p>建立一个新的drupal模块是很简单的，有多么简单呢？简单到现在已经有超过5000个drupal模块，甚至许多drupal模块的开发者都是php新手。其实，接下来我们这个模块的代码就可以说明开发一个模块是多么容易，完成一个模块只需要一个目录和两个小文件。</p>
+<h1 id="模块的名字">模块的名字</h1>
+<p>一个drupal模块需要两个名字：<br>&ensp;&ensp;<strong>人读名字:</strong>这个名字在.info 文件中用”name”去定义的，可以是一个或几个单词，单词的首字母大写，多个单词用空格分开。<br>&ensp;&ensp;<strong>机读名字:</strong>这个名字就是模块目录的名字，可以包括大、小写字母，数字和下划线。</p>
+<p>这两个名字应该尽量一致，比如“Administration menu”模块的机读名字就是“admin_menu”。<br>另外说明一点为了避免模块重名，你最好事先检查一下，你选用的模块“机读名称”是否已经存在了，你可在<a href="https://www.drupal.org/project/" target="_blank" rel="external">https://www.drupal.org/project/</a> 这个网址的后面加上你的模块的机读名称，看看官网上是否已经存在同名的文件。</p>
 <h2 id="模块放在哪">模块放在哪</h2>
+<p><img src="http://forpages.qiniudn.com/module_dir.jpg" alt="模块存放目录"><br>/modules 这个目录下边存放的是系统的核心模块，你不能改动这个目录下的任何文件，系统升级时有可能从写这个目录。<br>/sites/all/modules 我们安装的第三方的扩展模块会放到这个目录下边，drush默认会把模块下载到这个目录。<br>/sites/default/modules 这是推荐的放置我们模块的目录。modules目录默认是不存在的，需要手动创建。放到这里的好处是能够把我们自己的代码和标准的扩展模块区分开，便于查找和管理。放到这里的一个不利因素是，如果是在多网站的环境下，这个目录下边的模块将只对default这个站点起作用。</p>
 <h2 id="模块目录">模块目录</h2>
+<p>由于这是我们的第一个模块，我们就把它的机读名称命名为”frist”,接下来建立一个新的目录/sites/default/ modules/first，然后新建一个first.info文件和first.module文件，我们的模块就只需要这两个文件。<br>下面我们就开始写.info文件。</p>
 <h2 id="建立-info文件">建立.info文件</h2>
+<p>这个文件的作用是向drupal提供一些有关这个模块的基本信息，例如：模块的名称，依赖的其它模块，提供的代码文件等等。<br>.info文件是一个类似于ini配置文件的纯文本文件,每一行由‘名称’，‘等号’和‘值’组成，按照drupal的编码规范，等号的两边各有一个空格。<br>有些键名可以有多个值，这时候需要采用类似数组的定义方式，它的格式就像下边这样：<br>   name[] = value1<br>   name[] = value2<br>如果“值”的内容超过一行，要使用引号引起来。<br>以分号（;）开头的行会被当做注释处理。<br>好了，下面我们就看一下first.info的完整内容</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">name = First  <span class="comment">//模块的名字，会显示在模块管理界面</span></div><div class="line"><span class="keyword">description</span> = A first module.  <span class="comment">//对模块的描述</span></div><div class="line"><span class="keyword">package</span> = Drupal <span class="number">7</span> Development  <span class="comment">//模块会关联到哪个分组</span></div><div class="line">core = <span class="number">7</span>.x        <span class="comment">//模块运行要求的的drupal核心版本</span></div><div class="line">files[] = first.module   <span class="comment">//定义模块中包含的文件</span></div><div class="line"></div><div class="line">;<span class="keyword">dependencies</span>[] = autoload   <span class="comment">//这个模块依赖的其它模块</span></div><div class="line">;php = <span class="number">5.2</span>     <span class="comment">//要求的php版本</span></div></pre></td></tr></table></figure>
+
 <h2 id="建立-module文件">建立.module文件</h2>
+<p>一般一来说，.module文件中包含了所有主要的勾子实现。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">&lt;?php </div><div class="line"><span class="javadoc">/** </span></div><div class="line">*<span class="javadoctag"> @file</span> </div><div class="line">* A module exemplifying Drupal coding practices and APIs. </div><div class="line">* </div><div class="line">* This module provides a block that lists all of the  </div><div class="line">* installed modules. It illustrates coding standards,  </div><div class="line">* practices, and API use for Drupal 7. </div><div class="line">*/</div><div class="line"></div><div class="line"><span class="javadoc">/** </span></div><div class="line">* Implements hook_help(). </div><div class="line">*/ </div><div class="line">function first_help($path, $arg) {  </div><div class="line">	<span class="keyword">if</span> ($path == <span class="string">'admin/help#first'</span>) {    </div><div class="line">		<span class="keyword">return</span> t(<span class="string">'A demonstration module.'</span>);  </div><div class="line">	} </div><div class="line">}</div></pre></td></tr></table></figure>
+
 <h2 id="规范我们的代码">规范我们的代码</h2>
-<h2 id="doxygen代码风格区块">doxygen代码风格区块</h2>
+<p>下面是一些需要特别注意的drupal代码规范：</p>
+<ul>
+<li>缩进</li>
+<li>&lt;?php ?&gt; </li>
+<li>运算符两边空格</li>
+<li>流程控制</li>
+<li>函数</li>
+<li>变量<h2 id="doxygen代码风格区块">doxygen代码风格区块</h2>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;?php </div><div class="line"><span class="javadoc">/**      //注释以斜线（/）和两个星号(*)开始</span></div><div class="line">*<span class="javadoctag"> @file</span>  //</div><div class="line">* A module exemplifying Drupal coding practices and APIs. </div><div class="line">* </div><div class="line">* This module provides a block that lists all of the  </div><div class="line">* installed modules. It illustrates coding standards,  </div><div class="line">* practices, and API use for Drupal 7. </div><div class="line">*/  <span class="comment">// 注释以一个星号（*）和一个斜线（/）结束</span></div></pre></td></tr></table></figure>
+
+<p>注释以斜线（/）和两个星号(<em>)开始，以一个星号（</em>）和一个斜线（/）结束，其它每一行以星号开始，这种风格的注释被称为“文档块”（ documentation block）。@file 表示这是整个文件的描述，而不是文件中某一部分的描述，所有文件都应该以文档级别的文档块开始。<br>在@file下边一行是对本文件的简单介绍，一般在长度在一行之内。随后需要隔一行进行详细的打述</p>
 <h2 id="help_hook">help hook</h2>
+<p>drupa中定义了一个有关“帮助”的勾子，通过实现这个勾子，可以在用户访问帮助系统时，显示这个模块的帮助信息</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">first_help</span><span class="params">(<span class="variable">$path</span>, <span class="variable">$arg</span>)</span> </span>{  </div><div class="line">  <span class="keyword">if</span> (<span class="variable">$path</span> == <span class="string">'admin/help#first'</span>) {    </div><div class="line">    <span class="keyword">return</span> t(<span class="string">'A demonstration module.'</span>);  </div><div class="line">   }</div><div class="line">}</div></pre></td></tr></table></figure>
+
 <h2 id="t()函数与翻译">t()函数与翻译</h2>
 
       
