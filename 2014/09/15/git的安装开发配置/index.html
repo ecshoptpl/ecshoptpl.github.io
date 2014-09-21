@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>git安装配置 | Drupal &amp; Ecshop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Git是一种分布式版本控制和源码管理系统，不论是个人写代码还是团队协作，git都能给我们的开发带来很大的便利。而github就是一个最流行的git存取站点，而且它还提供了社交化软件开发功能。
+git
+我们将使用git作为drupal模块开发过程中的版本控制工具，因为drupal官方就是用git做源码管理，我们在开发使用git,会方便我们以后将模块提交给drupal.
+git安装
+yum insta">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git安装配置">
+<meta property="og:url" content="http://www.ecshoptpl.com/2014/09/15/git的安装开发配置/">
+<meta property="og:site_name" content="Drupal & Ecshop">
+<meta property="og:description" content="Git是一种分布式版本控制和源码管理系统，不论是个人写代码还是团队协作，git都能给我们的开发带来很大的便利。而github就是一个最流行的git存取站点，而且它还提供了社交化软件开发功能。
+git
+我们将使用git作为drupal模块开发过程中的版本控制工具，因为drupal官方就是用git做源码管理，我们在开发使用git,会方便我们以后将模块提交给drupal.
+git安装
+yum insta">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="git安装配置">
+<meta name="twitter:description" content="Git是一种分布式版本控制和源码管理系统，不论是个人写代码还是团队协作，git都能给我们的开发带来很大的便利。而github就是一个最流行的git存取站点，而且它还提供了社交化软件开发功能。
+git
+我们将使用git作为drupal模块开发过程中的版本控制工具，因为drupal官方就是用git做源码管理，我们在开发使用git,会方便我们以后将模块提交给drupal.
+git安装
+yum insta">
+
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+  
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Drupal &amp; Ecshop</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">drupal模块开发 ecshop二次开发</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">文章</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="submit" value="&#xF002;" class="search-form-submit"><input type="hidden" name="q" value="site:http://www.ecshoptpl.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-git的安装开发配置" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/09/15/git的安装开发配置/" class="article-date">
+  <time datetime="2014-09-15T12:54:34.000Z" itemprop="datePublished">9月 15 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      git安装配置
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Git是一种分布式版本控制和源码管理系统，不论是个人写代码还是团队协作，git都能给我们的开发带来很大的便利。而github就是一个最流行的git存取站点，而且它还提供了社交化软件开发功能。</p>
+<h1 id="git">git</h1>
+<p>我们将使用git作为drupal模块开发过程中的版本控制工具，因为drupal官方就是用git做源码管理，我们在开发使用git,会方便我们以后将模块提交给drupal.</p>
+<h2 id="git安装">git安装</h2>
+<p><div class="video-container"><iframe src="//forpages.qiniudn.com/2013-3-12-git.mp4" frameborder="0" autostart="false" allowfullscreen></iframe></div><br>yum install git<br>apt-get install git<br><a href="http://msysgit.github.io" target="_blank" rel="external">http://msysgit.github.io</a></p>
+<h2 id="git配置">git配置</h2>
+<p>在安装完git以后，要进行的基本配置有下面几个：<br>1.配置用户信息<br>git config —global user.name “your name”<br>git config —global user.email yourname@example.com</p>
+<p>2.颜色配置，这个在windows的效果不是很好<br>git config —global color.ui auto</p>
+<p>3.配置文件的作用域<br>/etc/gitconfig 对所有用户有效<br>~/.gitconfig 对当前用户有效<br>{工作目录}/.git/config 仅对当前项目有效</p>
+<p>$HOME 或者 C:Documents and Settings$USER 下的.gitconfig<br>git安装目录下的/etc/gitconfig</p>
+<p>4.配置要忽略的文件（.gitignore）,往往在项目中我们有许多文件不需要进行版本控制，像有些临时文件，图片文件，缓存文件等.</p>
+<ul>
+<li>gitignore文件格式:</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor"># 以'#'开始的行，被视为注释.</span></div><div class="line"><span class="preprocessor"># 忽略掉所有文件名是 foo.txt的文件.</span></div><div class="line">foo.txt</div><div class="line"></div><div class="line"><span class="preprocessor"># 忽略所有生成的 html文件,</span></div><div class="line">*.html</div><div class="line"></div><div class="line"><span class="preprocessor"># foo.html是手工维护的，所以例外.</span></div><div class="line">!foo.html</div><div class="line"></div><div class="line"><span class="preprocessor"># 忽略所有.o和 .a文件.</span></div><div class="line">*.[oa]</div></pre></td></tr></table></figure>
+
+
+<ul>
+<li>gitignore的作用范围<br>— 全局有效的配置</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git config --<span class="keyword">global</span> core.excludesfile ~/.gitignore</div></pre></td></tr></table></figure>
+
+<p>做完上边的配置之后，我们要在home目录建一个.gitigore文件，这个文件将对所有项目有效。如果项目需要上传到git服务器，gitignore的配置不会上传。</p>
+<p>— 局部有效的配置<br>直接在项目目录下建立.gitignore文件即可，同时这个文件也会被git跟踪，并跟随项目保存到服务器，也可以在这个文件中加入一行.gitignore，将其本身忽略。</p>
+<p>— 注意<br>对于已经commit的文件，gitignore不会对它们起作用，需要先从版本库中删除，再添加。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">#删除版本库中的文件</span></div><div class="line">git rm test.txt</div><div class="line">git commit -m <span class="string">"remove test.txt"</span></div></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/09/15/git的安装开发配置/" data-id="p2e0xdxtw1hk1rai" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/09/20/apache2配置虚拟主机/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          apache2配置虚拟主机
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/09/09/第一个drupal模块/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">第一个drupal模块</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+<section id="comments">
+    <div id="disqus_thread">
+<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/09/15/git的安装开发配置/" data-title="git安装配置" data-url="http://www.ecshoptpl.com/2014/09/15/git的安装开发配置/"></div>
+<!-- 多说评论框 end -->
+  </div>
+</section>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/drupal7模块开发/">drupal7模块开发</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/drupal7模块开发/" style="font-size: NaNpx;">drupal7模块开发</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2014/09/20/apache2配置虚拟主机/">apache2配置虚拟主机</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/15/git的安装开发配置/">git安装配置</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/09/第一个drupal模块/">第一个drupal模块</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/08/drupal开发工具/">drupal开发工具</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/04/drupal-module-development-intro/">drupal7模块开发--概述</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+    </div>
+  </div>
+</footer>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"ecshoptpl"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">文章</a>
+  
+</nav>
+    
+
+<script src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+
+  </div>
+</body>
+</html>
