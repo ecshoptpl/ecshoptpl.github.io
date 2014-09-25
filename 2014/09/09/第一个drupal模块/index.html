@@ -155,8 +155,14 @@
 <p>一个函数是如何成为一个勾子的实现的呢？就是靠它的名字： first_help(). 这个名字遵循了勾子的模式。如果一个勾子命名为hook_help,那么要实现它，只需把“hook”这个词替换成模块的名字。因此，要实现hook_help这个勾子，只要用first模块的名字来定义一个函数first_hook().<br>每一个勾子都自己的参数，所有的drupal核心提供的勾子文档都被整理在<a href="http://api.drupal.org" target="_blank" rel="external">http://api.drupal.org</a>.<br>hook_help() 需要两个参数</p>
 <ul>
 <li>$path: 帮助系统的url路径</li>
-<li>$arg : 当访问这个url的时候，用到的参数<br>在我们这个例子中，只涉及到第一个参数。基本上，帮助系统就是通过url路径匹配帮助文本。我们的模块需要定义给这引起特定的url提供什么样的文字信息。具体地，<h2 id="t()函数与翻译">t()函数与翻译</h2>
-</li>
+<li>$arg : 当访问这个url的时候，用到的参数<br>在我们这个例子中，只涉及到第一个参数。基本上，帮助系统就是通过url路径匹配帮助文本。我们的模块需要定义给这引起特定的url提供什么样的文字信息。当访问admin/help#MODULE_NAME的时候，在模块中定义的帮助信息就会显示出来，其中MODULE_NAME指的是模块的机器名称。<br>这个函数是通过检查$path来做出响应的，如果$path设置的是admin/help#first,那么它将返回一些简单的帮助信息。</li>
+</ul>
+<h2 id="t()函数与翻译">t()函数与翻译</h2>
+<p>drupal的开发者应该理解的t函数的三个特性：</p>
+<ul>
+<li>当t函数被调用时发生了什么</li>
+<li>drupal是怎么维护翻译表的</li>
+<li>t函数的附加功能</li>
 </ul>
 
       
@@ -229,7 +235,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a><span class="archive-list-count">5</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -239,6 +245,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2014/09/25/你的php网站被入侵了吗？/">你的php网站被入侵了吗？</a>
+          </li>
         
           <li>
             <a href="/2014/09/20/apache2配置虚拟主机/">apache2配置虚拟主机</a>
@@ -254,10 +264,6 @@
         
           <li>
             <a href="/2014/09/08/drupal开发工具/">drupal开发工具</a>
-          </li>
-        
-          <li>
-            <a href="/2014/09/04/drupal-module-development-intro/">drupal7模块开发--概述</a>
           </li>
         
       </ul>
