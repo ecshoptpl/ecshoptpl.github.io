@@ -62,6 +62,331 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-常见的访问控制实现方式" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/11/07/常见的访问控制实现方式/" class="article-date">
+  <time datetime="2014-11-07T07:12:34.000Z" itemprop="datePublished">11月 7 2014</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/权限设计/">权限设计</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/11/07/常见的访问控制实现方式/">几种常见的访问控制实现方式</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>‘访问控制’系统也叫’安全系统’或者’权限’系统，在单用户应用当中，比如典型的桌面计算机，它们并不需要太多的访问控制-用户在应用当中访问访问当的功能。但是在多用户系统当中，应用往往被布署在多个设备上，并通过网络连接到一起，这个时候并不是所有的用户都可以使用所有的功能，在这种情况下的一个解决办法就是，只有经过授权的人才能访问其中的特定功能。通过维护这样的系统需要有以下几个细节：<br>-系统当中的功能列表。这些功能有时候被称为’交易’ 或者 ‘任务’。<br>-允许访问应用的人员名单。这些有人有时也被称为’用户’,这些信息通常会在登陆时用到，用户在访问系统的任何功能之前必须要经过登陆。<br>-权限许可列表，它用来标识哪个用户可以使用哪些功能。<br>这些列表通常使用数据库中的表来维护。</p>
+<h2 id="什么是’基于角色’?">什么是’基于角色’?</h2>
+<p>有很多方式可以实现将不同的权限赋给不同的用户，但是第种方法都有它们自身的优势和不足：</p>
+<h3 id="基于级别">基于级别</h3>
+<p>这是一种只需要两张数据表的简单系统。它只需要一张用户表和一张任务表，而且它们之间无需建立关系。<br>| 用户|任务<br>在这个系统当中，每个任务会被分配一个1-99之间的数字，作为它的安全级别，1是最低级别，99为最高。每个用户同样有一个安全级别的数字，并且它只能访问安全级别小于等于这数字的任务。比如一个用户的安全级别是5，那么它只能访问安全级别在1-5之间的任务。<br>这种系统存在的问题是：<br>-如果两个任务都有相同的安全级别，那么它们要么都能被一个用户访问，或者都不能。这时没有办法进行更细致的控制。<br>-如果一个用户有一个较高的安全访问级别，那么就无法实现在访问的时候排除安全级别较低的任务，比如A用户的安全访问级别为1，B用户为2，A任务的级别为1，B任务为2，如果不想让B用户访问A任务是无法实现的。</p>
+<h3 id="基于用户">基于用户</h3>
+<p>在这种系统中要为单个用户分配权限，在这个系统当中用户与权限之间，任务与权限之间都是多对多的关系。<br>几种具体的实现方式：<br>-复杂任务：在一个任务当中包含了增删改查的模式，访问一个任务，即包含了所有这些模式。<br>-在权限表中保存了对第一个任务的增删改查的yes/no的开关，这样主形成了一个crud矩阵。<br>-简单任务：第一种模式（crud）由每一个完全独立的任务来处理—不需要crud矩阵。<br>这种设计的不足是当多个用户都具有相同的权限时，一旦权限发生变化，每个用户都要进行单独的调整。</p>
+<h3 id="基于组">基于组</h3>
+<p>在这种模式当中用户被分成了不同的组，权限直接被分配到用户组，而不是单独的用户<br>这种设计的好处是：<br>-对用户组的任何修改都将被该组的所有用户继承<br>-改变用户的权限非常容易，因为只有一张权限表需要维护<br>-如果一个用户改变了他的分组，那么它将和以前的分组没有任何联系。</p>
+<h3 id="基于职责">基于职责</h3>
+<p>这种设计可以实现一个用户同时属于一个或多个分组。<br>用户组表有时也被称为职责区域，因为个体用户可能有多个职责。<br>这种设计的不足：<br>-只能通过链接到另一个分组来给用户增加权限，而不能撤消已有分组的权限<br>-为了让一个用户访问一个任务需要，需要维护两张表USER-USER-GROUP表和TASK-USER-GROUP表</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/11/07/常见的访问控制实现方式/" data-id="3klgsyv92xdtrap3" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabc/">rabc</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/权限管理/">权限管理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/访问控制/">访问控制</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-rabc的基本概念" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/11/07/rabc的基本概念/" class="article-date">
+  <time datetime="2014-11-07T07:10:34.000Z" itemprop="datePublished">11月 7 2014</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/权限设计/">权限设计</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/11/07/rabc的基本概念/">rabc的基本概念</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>rbac能够实现限制只有认证用户才能访问系统的效果。主要用在有超过500名员工的企业中。超过500名员工，可以实现强制访问控制—mandatory access control(MAC) 或者<br>自主访问控制—discretionary access control(DAC).RBAC有时被简称为基于角色的安全性。<br>在一个组织内，角色有多种功能。给不同的角色分配不同的执行权限。会员或者工作人员（或者其他系统用户）都被赋给特定的角色，并且通过角色分配获得执行特定操作的权限。不能直接为用户分配权限，用户只能通过他们的角色获得不同的权限，对个人用户权限的管理变成了给用户账户分配适合的角色；这简化了常见的操作，比如添加用户，或者改变用户的部门。<br>为RBAC定义三种主要规则<br>角色分配：只有给主体分配了角色，主要才有相应的权限许可。<br>角色授权：主体的角色必须经过授权，这条规则用来确认主体被分配的角色是经过授权的。<br>许可授权：只有当一个许可授权给了主体的角色，主体才能行使这个权限，这条规则用来确认用户只能行使被授权的权限。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/11/07/rabc的基本概念/" data-id="w9lhwsxcqrkxnatz" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabc/">rabc</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/权限管理/">权限管理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/访问控制/">访问控制</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-基于角色的访问控制--Role-based access contrl" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/11/07/基于角色的访问控制--Role-based access contrl/" class="article-date">
+  <time datetime="2014-11-07T07:06:34.000Z" itemprop="datePublished">11月 7 2014</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/权限设计/">权限设计</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/11/07/基于角色的访问控制--Role-based access contrl/">通过sql构建基于角色的访问控制</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近，一些文章让我感受到通过orm与数据库打交道是多么的有趣和方便。由于一些原因，它们既是开发人员的最爱，又是数据库管理员的恶梦（想想代理主键）。但是用一致的列设计表有它的好处。那些没有内在意义的元数据列，并不代表他们没有价值。在这上系列的文章中，我将向你展示用这些“毫无意义”的元数据实现强大的，用效的应用程序级基于角色的访问控制（通过数据库实现。虽然你可以把它用到任何应用当中，但是我们这里重点关注web应用。<br>
+        
+          <p class="article-more-link">
+            <a href="/2014/11/07/基于角色的访问控制--Role-based access contrl/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/11/07/基于角色的访问控制--Role-based access contrl/" data-id="o9mb6odxkoamgvtj" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabc/">rabc</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/权限管理/">权限管理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/访问控制/">访问控制</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-正则表达式" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/11/02/正则表达式/" class="article-date">
+  <time datetime="2014-11-02T03:00:44.000Z" itemprop="datePublished">11月 2 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>模式修正符：<br>    忽略空白字符 x<br>    禁止贪婪匹配 U<br>    强制从字符开始计算 A<br>    D 设置$仅匹配到目录字符串的结尾，加上m后不起作用。<br>    e 将替换preg_replace()中的替换字符串作为表达式来使用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/11/02/正则表达式/" data-id="hc8f2p52rp1tfi8c" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-ssh管理命令" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/10/25/ssh管理命令/" class="article-date">
+  <time datetime="2014-10-25T00:46:41.000Z" itemprop="datePublished">10月 25 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Ubuntu Linux: Start OpenSSH Server</p>
+<p>Type the following command:<br>$ sudo /etc/init.d/ssh start</p>
+<p>OR<br>$ sudo service ssh start</p>
+<p>Ubuntu Linux: Stop OpenSSH server</p>
+<p>Type the following command:<br>$ sudo /etc/init.d/ssh stop</p>
+<p>OR<br>$ sudo service ssh stop</p>
+<p>Ubuntu Linux: Restart OpenSSH server</p>
+<p>Type the following command:<br>$ sudo /etc/init.d/ssh restart</p>
+<p>OR<br>$ sudo service ssh restart</p>
+<p>Ubuntu Linux: See status of OpenSSH server</p>
+<p>Type the following command:<br>$ sudo /etc/init.d/ssh status</p>
+<p>OR<br>$ sudo service ssh status</p>
+<p>Controlling sshd using upstart based commands</p>
+<p>Since the script /etc/init.d/ssh has been converted to an Upstart based job, try the following commands to start / stop / restart the OpenSSH server:</p>
+<p>Stop/Start/Restart the OpenSSH using the following commands</p>
+<p>The syntax is:</p>
+<p>sudo stop ssh<br>sudo start ssh<br>sudo restart ssh<br>sudo status ssh</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/10/25/ssh管理命令/" data-id="ucek3zwfubtrix08" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-mysql" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/10/24/mysql/" class="article-date">
+  <time datetime="2014-10-24T07:21:29.000Z" itemprop="datePublished">10月 24 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>查看慢查询是否开启：show variables like ‘slow_query_log’;<br>开启慢查询日志：set global slow_query_log=on;<br>设置慢查询日志的位置：set global slow_query_log_file=’’;<br>慢查询包含没有使用索引的查询：set global log_queries_not_using_indexes=on<br>设置慢查询时间（单位：秒）通常有0.01: set global long_query_time=0</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/10/24/mysql/" data-id="pxkviyu69e9idvns" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-vim" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/10/24/vim/" class="article-date">
+  <time datetime="2014-10-24T02:12:53.000Z" itemprop="datePublished">10月 24 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>ctrlp<br>    刷新：F5<br>    打开多个文件：ctrl+z ctrl+o</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/10/24/vim/" data-id="991e3ow1rittytwq" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-第一个模块-区块勾子" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/10/14/第一个模块-区块勾子/" class="article-date">
+  <time datetime="2014-10-14T02:34:55.000Z" itemprop="datePublished">10月 14 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/10/14/第一个模块-区块勾子/">第一个模块-区块勾子</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>我们将通过代码创建一个区块，并且在这个区块中列出所有的模块，在这个模块中我们会用过两个区块勾子</p>
+<ul>
+<li>hook_block_info(): 定义区块信息</li>
+<li>hook_block_view(): 当要展示的时候，drupal要做的事情<br>区块勾子和其它API一样，在一块模块中只能调用一次，但是能过一个区块勾子可以创建多个区块。</li>
+</ul>
+<h2 id="区块信息">区块信息</h2>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/10/14/第一个模块-区块勾子/" data-id="sdetioxm9np21zbi" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
     <article id="post-你的php网站被入侵了吗？" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2014/09/25/你的php网站被入侵了吗？/" class="article-date">
@@ -166,7 +491,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.ecshoptpl.com/2014/09/25/你的php网站被入侵了吗？/" data-id="hxw6rqs3m7v5w587" class="article-share-link">Share</a>
+      <a data-url="http://www.ecshoptpl.com/2014/09/25/你的php网站被入侵了吗？/" data-id="6zfqqqpueforrmxu" class="article-share-link">Share</a>
       
       
     </footer>
@@ -233,7 +558,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.ecshoptpl.com/2014/09/20/apache2配置虚拟主机/" data-id="yadpw6op5gufl9cd" class="article-share-link">Share</a>
+      <a data-url="http://www.ecshoptpl.com/2014/09/20/apache2配置虚拟主机/" data-id="subbxwm1d9ovbms1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -245,294 +570,29 @@
 
 
   
-    <article id="post-git的安装开发配置" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/09/15/git的安装开发配置/" class="article-date">
-  <time datetime="2014-09-15T12:54:34.000Z" itemprop="datePublished">9月 15 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/15/git的安装开发配置/">git安装配置</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Git是一种分布式版本控制和源码管理系统，不论是个人写代码还是团队协作，git都能给我们的开发带来很大的便利。而github就是一个最流行的git存取站点，而且它还提供了社交化软件开发功能。</p>
-<h1 id="git">git</h1>
-<p>我们将使用git作为drupal模块开发过程中的版本控制工具，因为drupal官方就是用git做源码管理，我们在开发使用git,会方便我们以后将模块提交给drupal.</p>
-<h2 id="git安装">git安装</h2>
-<p><div class="video-container"><iframe src="//forpages.qiniudn.com/2013-3-12-git.mp4" frameborder="0" autostart="false" allowfullscreen></iframe></div><br>yum install git<br>apt-get install git<br><a href="http://msysgit.github.io" target="_blank" rel="external">http://msysgit.github.io</a></p>
-<h2 id="git配置">git配置</h2>
-<p>在安装完git以后，要进行的基本配置有下面几个：<br>1.配置用户信息<br>git config —global user.name “your name”<br>git config —global user.email yourname@example.com</p>
-<p>2.颜色配置，这个在windows的效果不是很好<br>git config —global color.ui auto</p>
-<p>3.配置文件的作用域<br>/etc/gitconfig 对所有用户有效<br>~/.gitconfig 对当前用户有效<br>{工作目录}/.git/config 仅对当前项目有效</p>
-<p>$HOME 或者 C:Documents and Settings$USER 下的.gitconfig<br>git安装目录下的/etc/gitconfig</p>
-<p>4.配置要忽略的文件（.gitignore）,往往在项目中我们有许多文件不需要进行版本控制，像有些临时文件，图片文件，缓存文件等.</p>
-<ul>
-<li>gitignore文件格式:</li>
-</ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor"># 以'#'开始的行，被视为注释.</span></div><div class="line"><span class="preprocessor"># 忽略掉所有文件名是 foo.txt的文件.</span></div><div class="line">foo.txt</div><div class="line"></div><div class="line"><span class="preprocessor"># 忽略所有生成的 html文件,</span></div><div class="line">*.html</div><div class="line"></div><div class="line"><span class="preprocessor"># foo.html是手工维护的，所以例外.</span></div><div class="line">!foo.html</div><div class="line"></div><div class="line"><span class="preprocessor"># 忽略所有.o和 .a文件.</span></div><div class="line">*.[oa]</div></pre></td></tr></table></figure>
-
-
-<ul>
-<li>gitignore的作用范围<br>— 全局有效的配置</li>
-</ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git config --<span class="keyword">global</span> core.excludesfile ~/.gitignore</div></pre></td></tr></table></figure>
-
-<p>做完上边的配置之后，我们要在home目录建一个.gitigore文件，这个文件将对所有项目有效。如果项目需要上传到git服务器，gitignore的配置不会上传。</p>
-<p>— 局部有效的配置<br>直接在项目目录下建立.gitignore文件即可，同时这个文件也会被git跟踪，并跟随项目保存到服务器，也可以在这个文件中加入一行.gitignore，将其本身忽略。</p>
-<p>— 注意<br>对于已经commit的文件，gitignore不会对它们起作用，需要先从版本库中删除，再添加。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">#删除版本库中的文件</span></div><div class="line">git rm test.txt</div><div class="line">git commit -m <span class="string">"remove test.txt"</span></div></pre></td></tr></table></figure>
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://www.ecshoptpl.com/2014/09/15/git的安装开发配置/" data-id="p2e0xdxtw1hk1rai" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-第一个drupal模块" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/09/09/第一个drupal模块/" class="article-date">
-  <time datetime="2014-09-09T00:15:03.000Z" itemprop="datePublished">9月 9 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/09/第一个drupal模块/">第一个drupal模块</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="目标">目标</h1>
-<p>我们的第一模块将实现以下功能：通过一个区块，展示出已经启用的模块列表。<br>我们将分三步实现这个完成这个模块：</p>
-<ul>
-<li>建立模块目录和模块文件</li>
-<li>建立区别</li>
-<li>利用drupal中的SimpleTest框架写一个自动测试</li>
-</ul>
-<p>按照敏捷开发的思想，我们应该先写测试，但是为了简单起见，我们采用了上面的流程.<br>不管怎么样，我们的目标是说明如何写一个模块，而不是演示具体的开发方法。我们这样做会更简单一些，这主要有两个原因：</p>
-<ul>
-<li>SimpleTest是我们这一章最简单的一部分，它的代码量是实际模块的两倍。</li>
-<li>我们在尝试写测试的时候，应该先熟悉这些在开发中会用到的api。</li>
-</ul>
-<p>在正规的模块开发过程中，你可以遵循TDD的开发流程，先写测试，然后写模块。但是我们现在以学习为主，所以还是按照我们上边的流程，先来写我们的模块。</p>
-<h1 id="写一个新模块">写一个新模块</h1>
-<p>建立一个新的drupal模块是很简单的，有多么简单呢？简单到现在已经有超过5000个drupal模块，甚至许多drupal模块的开发者都是php新手。其实，接下来我们这个模块的代码就可以说明开发一个模块是多么容易，完成一个模块只需要一个目录和两个小文件。</p>
-<h1 id="模块的名字">模块的名字</h1>
-<p>一个drupal模块需要两个名字：<br>&ensp;&ensp;<strong>人读名字:</strong>这个名字在.info 文件中用”name”去定义的，可以是一个或几个单词，单词的首字母大写，多个单词用空格分开。<br>&ensp;&ensp;<strong>机读名字:</strong>这个名字就是模块目录的名字，可以包括大、小写字母，数字和下划线。</p>
-<p>这两个名字应该尽量一致，比如“Administration menu”模块的机读名字就是“admin_menu”。<br>另外说明一点为了避免模块重名，你最好事先检查一下，你选用的模块“机读名称”是否已经存在了，你可在<a href="https://www.drupal.org/project/" target="_blank" rel="external">https://www.drupal.org/project/</a> 这个网址的后面加上你的模块的机读名称，看看官网上是否已经存在同名的文件。</p>
-<h2 id="模块放在哪">模块放在哪</h2>
-<p><img src="http://forpages.qiniudn.com/module_dir.jpg" alt="模块存放目录"><br>/modules 这个目录下边存放的是系统的核心模块，你不能改动这个目录下的任何文件，系统升级时有可能从写这个目录。<br>/sites/all/modules 我们安装的第三方的扩展模块会放到这个目录下边，drush默认会把模块下载到这个目录。<br>/sites/default/modules 这是推荐的放置我们模块的目录。modules目录默认是不存在的，需要手动创建。放到这里的好处是能够把我们自己的代码和标准的扩展模块区分开，便于查找和管理。放到这里的一个不利因素是，如果是在多网站的环境下，这个目录下边的模块将只对default这个站点起作用。</p>
-<h2 id="模块目录">模块目录</h2>
-<p>由于这是我们的第一个模块，我们就把它的机读名称命名为”frist”,接下来建立一个新的目录/sites/default/ modules/first，然后新建一个first.info文件和first.module文件，我们的模块就只需要这两个文件。<br>下面我们就开始写.info文件。</p>
-<h2 id="建立-info文件">建立.info文件</h2>
-<p>这个文件的作用是向drupal提供一些有关这个模块的基本信息，例如：模块的名称，依赖的其它模块，提供的代码文件等等。<br>.info文件是一个类似于ini配置文件的纯文本文件,每一行由‘名称’，‘等号’和‘值’组成，按照drupal的编码规范，等号的两边各有一个空格。<br>有些键名可以有多个值，这时候需要采用类似数组的定义方式，它的格式就像下边这样：<br>   name[] = value1<br>   name[] = value2<br>如果“值”的内容超过一行，要使用引号引起来。<br>以分号（;）开头的行会被当做注释处理。<br>好了，下面我们就看一下first.info的完整内容</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">name = First  <span class="comment">//模块的名字，会显示在模块管理界面</span></div><div class="line"><span class="keyword">description</span> = A first module.  <span class="comment">//对模块的描述</span></div><div class="line"><span class="keyword">package</span> = Drupal <span class="number">7</span> Development  <span class="comment">//模块会关联到哪个分组</span></div><div class="line">core = <span class="number">7</span>.x        <span class="comment">//模块运行要求的的drupal核心版本</span></div><div class="line">files[] = first.module   <span class="comment">//定义模块中包含的文件</span></div><div class="line"></div><div class="line">;<span class="keyword">dependencies</span>[] = autoload   <span class="comment">//这个模块依赖的其它模块</span></div><div class="line">;php = <span class="number">5.2</span>     <span class="comment">//要求的php版本</span></div></pre></td></tr></table></figure>
-
-<h2 id="建立-module文件">建立.module文件</h2>
-<p>一般一来说，.module文件中包含了所有主要的勾子实现。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">&lt;?php </div><div class="line"><span class="javadoc">/** </span></div><div class="line">*<span class="javadoctag"> @file</span> </div><div class="line">* A module exemplifying Drupal coding practices and APIs. </div><div class="line">* </div><div class="line">* This module provides a block that lists all of the  </div><div class="line">* installed modules. It illustrates coding standards,  </div><div class="line">* practices, and API use for Drupal 7. </div><div class="line">*/</div><div class="line"></div><div class="line"><span class="javadoc">/** </span></div><div class="line">* Implements hook_help(). </div><div class="line">*/ </div><div class="line">function first_help($path, $arg) {  </div><div class="line">	<span class="keyword">if</span> ($path == <span class="string">'admin/help#first'</span>) {    </div><div class="line">		<span class="keyword">return</span> t(<span class="string">'A demonstration module.'</span>);  </div><div class="line">	} </div><div class="line">}</div></pre></td></tr></table></figure>
-
-<h2 id="规范我们的代码">规范我们的代码</h2>
-<p>下面是一些需要特别注意的drupal代码规范：</p>
-<ul>
-<li>缩进</li>
-<li>&lt;?php ?&gt; </li>
-<li>运算符两边空格</li>
-<li>流程控制</li>
-<li>函数</li>
-<li>变量<h2 id="doxygen代码风格区块">doxygen代码风格区块</h2>
-</li>
-</ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;?php </div><div class="line"><span class="javadoc">/**      //注释以斜线（/）和两个星号(*)开始</span></div><div class="line">*<span class="javadoctag"> @file</span>  //</div><div class="line">* A module exemplifying Drupal coding practices and APIs. </div><div class="line">* </div><div class="line">* This module provides a block that lists all of the  </div><div class="line">* installed modules. It illustrates coding standards,  </div><div class="line">* practices, and API use for Drupal 7. </div><div class="line">*/  <span class="comment">// 注释以一个星号（*）和一个斜线（/）结束</span></div></pre></td></tr></table></figure>
-
-<p>注释以斜线（/）和两个星号(<em>)开始，以一个星号（</em>）和一个斜线（/）结束，其它每一行以星号开始，这种风格的注释被称为“文档块”（ documentation block）。@file 表示这是整个文件的描述，而不是文件中某一部分的描述，所有文件都应该以文档级别的文档块开始。<br>在@file下边一行是对本文件的简单介绍，一般在长度在一行之内。随后需要隔一行进行详细的打述</p>
-<h2 id="help_hook">help hook</h2>
-<p>drupa中定义了一个有关“帮助”的勾子，通过实现这个勾子，可以在用户访问帮助系统时，显示这个模块的帮助信息</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">first_help</span><span class="params">(<span class="variable">$path</span>, <span class="variable">$arg</span>)</span> </span>{  </div><div class="line">  <span class="keyword">if</span> (<span class="variable">$path</span> == <span class="string">'admin/help#first'</span>) {    </div><div class="line">    <span class="keyword">return</span> t(<span class="string">'A demonstration module.'</span>);  </div><div class="line">   }</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>一个函数是如何成为一个勾子的实现的呢？就是靠它的名字： first_help(). 这个名字遵循了勾子的模式。如果一个勾子命名为hook_help,那么要实现它，只需把“hook”这个词替换成模块的名字。因此，要实现hook_help这个勾子，只要用first模块的名字来定义一个函数first_hook().<br>每一个勾子都自己的参数，所有的drupal核心提供的勾子文档都被整理在<a href="http://api.drupal.org" target="_blank" rel="external">http://api.drupal.org</a>.<br>hook_help() 需要两个参数</p>
-<ul>
-<li>$path: 帮助系统的url路径</li>
-<li>$arg : 当访问这个url的时候，用到的参数<br>在我们这个例子中，只涉及到第一个参数。基本上，帮助系统就是通过url路径匹配帮助文本。我们的模块需要定义给这引起特定的url提供什么样的文字信息。当访问admin/help#MODULE_NAME的时候，在模块中定义的帮助信息就会显示出来，其中MODULE_NAME指的是模块的机器名称。<br>这个函数是通过检查$path来做出响应的，如果$path设置的是admin/help#first,那么它将返回一些简单的帮助信息。</li>
-</ul>
-<h2 id="t()函数与翻译">t()函数与翻译</h2>
-<p>drupal的开发者应该理解的t函数的三个特性：</p>
-<ul>
-<li>当t函数被调用时发生了什么</li>
-<li>drupal是怎么维护翻译表的</li>
-<li>t函数的附加功能</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://www.ecshoptpl.com/2014/09/09/第一个drupal模块/" data-id="8lbytaqpb4twbgt7" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-drupal开发工具" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/09/08/drupal开发工具/" class="article-date">
-  <time datetime="2014-09-08T13:36:11.000Z" itemprop="datePublished">9月 8 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/08/drupal开发工具/">drupal开发工具</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="drush">drush</h3>
-<p>drush是一个关于drupal的命令行工具，它可以让我们通过命令行的方式更方便的完成页面操作。最简单的比如：下载模块，清除缓存，修改主题等等。</p>
-<h4 id="drush的安装">drush的安装</h4>
-<p>drush有多种安装方式，我们这里只介绍windows下的安装，如果大家想了解drush的其它方式或详细情况，可以访问它的官网，或者<a href="https://github.com/drush-ops/drush" target="_blank" rel="external">github</a></p>
-<ul>
-<li>到<a href="http://www.drush.org/drush_windows_installer" target="_blank" rel="external">http://www.drush.org/drush_windows_installer</a>下载drush安装包.</li>
-<li>像其它的windows程序的安装一样，直接下一步就可以完成安装。</li>
-<li>在安装完成以后可以通过Drush Command Prompt来运行drush命令，如果想在命令行运行drush需要将drush的目录注册到系统的环境变量当中。<h4 id="drush的常用命令">drush的常用命令</h4>
-drush有很多功能可以简化我们的操作，下面只是列出一些经常用到的，具体的大家可以到<a href="http://www.drush.org" target="_blank" rel="external">官网</a>查阅。</li>
-<li>drush dl devel&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;                下载devel模块</li>
-<li>drush dl devel —select       下载指定版本的devel模块</li>
-<li>drush en devel&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;                启用devel模块</li>
-<li>drush en deval —yes&ensp;          启用devel模块，启用过程中无需确定</li>
-<li>drush dis devel&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;               停用devel模块          </li>
-<li>drush up drupal&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;              升级drupal核心</li>
-<li>drush up devel&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;                更新devel模块</li>
-<li>drush cc&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;                      清除缓存<h3 id="编辑器与IDE">编辑器与IDE</h3>
-在[这个]页面上列出了一些常见的文本编辑器和IDE用来开发drupal需要进行的一些配置，你可以选择自己常用的编辑器或者IED，按照相关的教程进行一些必要的设置。这样可以使你的工具更加适合drupal的开发，比如缩进，实例，代码片断，代码风格等，这样能让你的代码更加的规范。<br>下面我们以vim为例简单介绍一下编辑器的一些设定。</li>
-<li>如果是在windows上面，可以去<a href="http://www.vim.org/download.php" target="_blank" rel="external">http://www.vim.org/download.php</a>下载安装gvim，安装完成后需要把gvim的执行目录，添加到时系统环境变量。</li>
-<li>利用我们上边安装的drush，来安装drupal for vim插件。</li>
-</ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">drush @none dl vimrc</div><div class="line">drush <span class="operator"><span class="keyword">help</span> vimrc-<span class="keyword">install</span></span></div><div class="line">drush -v vimrc-<span class="keyword">install</span></div></pre></td></tr></table></figure>
-
-<p>这个插件已经把我们需要修改的一些设置已经做完了，并且添加了代码高亮等功能。具体使用方法可去<a href="https://www.drupal.org/node/1389006" target="_blank" rel="external">这个</a>页面查看。<br><img src="http://forpages.qiniudn.com/vimrc_project.png" alt="vim效果图"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://www.ecshoptpl.com/2014/09/08/drupal开发工具/" data-id="xj3fmxuyie85cfsl" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-drupal-module-development-intro" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/09/04/drupal-module-development-intro/" class="article-date">
-  <time datetime="2014-09-04T12:39:47.000Z" itemprop="datePublished">9月 4 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/04/drupal-module-development-intro/">drupal7模块开发--概述</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>drupal</strong>从2000年发展至今，已经成为非常成熟和完善的开源框架，它不仅有着极其丰富的功能框架和模板，更加重要的是除了软件本身，它的社区和运作机制已经非常完善。在这个过程中，drupal也变得越来越庞大和复杂。使学习者要想掌握它，需要学习的东西也越来越多。下面我我们就来梳理一下drupal当中最重要的部分有哪些：<br>-<strong>钩子系统</strong>:<br>-<strong>核心模块</strong>:<br>-<strong>数据库抽象层</strong>:<br>-<strong>菜单路由系统</strong>:<br>-<strong>节点</strong>:<br>-<strong>文件</strong>:<br>-<strong>用户</strong>:<br>-<strong>字段与实体</strong>:<br>-<strong>表单系统</strong>:<br>-<strong>测试开发</strong>:<br>-<strong>区块</strong>:<br>-<strong>其他</strong>:</p>
-<p>为什么要学习drupal模块开发？</p>
-<ol>
-<li><p>在学习过程中可以提高自己的技术水平。<br> 通过不断深入接触drupal能够使我们对它的设计思想有更深入的了解，而且它的模块包括的范围非常广泛，我们能够接触到drupal之外的许多新技术，像webservers, redis缓存， 安全认证等等，都在drupal的模块中有所提现。<br> 而且drupal有着非常规范的代码标准，这也能使我们在学习过程中，使自己写的代码更加规范，在模块开发过程中我们还会应用过版本控件，功能测试等良好的开发习惯。</p>
-</li>
-<li><p>可以使我们更加灵活高效的应对用户的各种需求。<br> drupal的模块虽然已经非常的多，已经能够满足我们大多数的功能需求，可是这并能保证我们的项目，可以完全用别人的模块来完成，而且很多时候即使我们可以使用第三方的模块，但这并不一定能达到最佳的效果。</p>
-</li>
-<li><p>真正了解开源软件的意义。<br> 开源并不是简单的开放源代码，而且一种“开放”， “共享”， “协作”的运作模式，除了代码，人们之间如何相互协作也是值得我们学习和思考的。<br> 我们不仅是从社区获取需要的模块和帮助，我们也是社区的贡献者。我们可以从提交bug, 问题反馈，回答问题，提供补丁和代码的过程中，真正融入到开源社区，体现自身价值。</p>
-</li>
-</ol>
-<p>当然，drupal本身也存在诸多问题，但这也正好给了我们去完善它的机会，如果你对开源软件感兴趣，可以尝试一下drupal.</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://www.ecshoptpl.com/2014/09/04/drupal-module-development-intro/" data-id="ziov64ctfzq3v9ye" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/drupal7模块开发/">drupal7模块开发</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="extend next" rel="next" href="/archives/page/2/">Next &raquo;</a>
+    </nav>
   
 </section>
         
           <aside id="sidebar">
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/权限设计/">权限设计</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
   
     
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/drupal7模块开发/">drupal7模块开发</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/drupal7模块开发/">drupal7模块开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rabc/">rabc</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/权限管理/">权限管理</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/访问控制/">访问控制</a><span class="tag-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -541,7 +601,7 @@ drush有很多功能可以简化我们的操作，下面只是列出一些经常
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/drupal7模块开发/" style="font-size: NaNpx;">drupal7模块开发</a>
+      <a href="/tags/drupal7模块开发/" style="font-size: 10.00px;">drupal7模块开发</a><a href="/tags/rabc/" style="font-size: 20.00px;">rabc</a><a href="/tags/权限管理/" style="font-size: 20.00px;">权限管理</a><a href="/tags/访问控制/" style="font-size: 20.00px;">访问控制</a>
     </div>
   </div>
 
@@ -550,7 +610,7 @@ drush有很多功能可以简化我们的操作，下面只是列出一些经常
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">November 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -562,23 +622,23 @@ drush有很多功能可以简化我们的操作，下面只是列出一些经常
       <ul>
         
           <li>
-            <a href="/2014/09/25/你的php网站被入侵了吗？/">你的php网站被入侵了吗？</a>
+            <a href="/2014/11/07/常见的访问控制实现方式/">几种常见的访问控制实现方式</a>
           </li>
         
           <li>
-            <a href="/2014/09/20/apache2配置虚拟主机/">apache2配置虚拟主机</a>
+            <a href="/2014/11/07/rabc的基本概念/">rabc的基本概念</a>
           </li>
         
           <li>
-            <a href="/2014/09/15/git的安装开发配置/">git安装配置</a>
+            <a href="/2014/11/07/基于角色的访问控制--Role-based access contrl/">通过sql构建基于角色的访问控制</a>
           </li>
         
           <li>
-            <a href="/2014/09/09/第一个drupal模块/">第一个drupal模块</a>
+            <a href="/2014/11/02/正则表达式/">(no title)</a>
           </li>
         
           <li>
-            <a href="/2014/09/08/drupal开发工具/">drupal开发工具</a>
+            <a href="/2014/10/25/ssh管理命令/">(no title)</a>
           </li>
         
       </ul>

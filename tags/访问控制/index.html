@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Tag: 访问控制 | Drupal &amp; Ecshop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Drupal & Ecshop">
+<meta property="og:url" content="http://www.ecshoptpl.com/tags/访问控制/">
+<meta property="og:site_name" content="Drupal & Ecshop">
+<meta property="og:description">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Drupal & Ecshop">
+<meta name="twitter:description">
+
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+  
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Drupal &amp; Ecshop</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">drupal模块开发 ecshop二次开发</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">文章</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="submit" value="&#xF002;" class="search-form-submit"><input type="hidden" name="q" value="site:http://www.ecshoptpl.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-常见的访问控制实现方式" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/11/07/常见的访问控制实现方式/" class="article-date">
+  <time datetime="2014-11-07T07:12:34.000Z" itemprop="datePublished">11月 7 2014</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/权限设计/">权限设计</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/11/07/常见的访问控制实现方式/">几种常见的访问控制实现方式</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>‘访问控制’系统也叫’安全系统’或者’权限’系统，在单用户应用当中，比如典型的桌面计算机，它们并不需要太多的访问控制-用户在应用当中访问访问当的功能。但是在多用户系统当中，应用往往被布署在多个设备上，并通过网络连接到一起，这个时候并不是所有的用户都可以使用所有的功能，在这种情况下的一个解决办法就是，只有经过授权的人才能访问其中的特定功能。通过维护这样的系统需要有以下几个细节：<br>-系统当中的功能列表。这些功能有时候被称为’交易’ 或者 ‘任务’。<br>-允许访问应用的人员名单。这些有人有时也被称为’用户’,这些信息通常会在登陆时用到，用户在访问系统的任何功能之前必须要经过登陆。<br>-权限许可列表，它用来标识哪个用户可以使用哪些功能。<br>这些列表通常使用数据库中的表来维护。</p>
+<h2 id="什么是’基于角色’?">什么是’基于角色’?</h2>
+<p>有很多方式可以实现将不同的权限赋给不同的用户，但是第种方法都有它们自身的优势和不足：</p>
+<h3 id="基于级别">基于级别</h3>
+<p>这是一种只需要两张数据表的简单系统。它只需要一张用户表和一张任务表，而且它们之间无需建立关系。<br>| 用户|任务<br>在这个系统当中，每个任务会被分配一个1-99之间的数字，作为它的安全级别，1是最低级别，99为最高。每个用户同样有一个安全级别的数字，并且它只能访问安全级别小于等于这数字的任务。比如一个用户的安全级别是5，那么它只能访问安全级别在1-5之间的任务。<br>这种系统存在的问题是：<br>-如果两个任务都有相同的安全级别，那么它们要么都能被一个用户访问，或者都不能。这时没有办法进行更细致的控制。<br>-如果一个用户有一个较高的安全访问级别，那么就无法实现在访问的时候排除安全级别较低的任务，比如A用户的安全访问级别为1，B用户为2，A任务的级别为1，B任务为2，如果不想让B用户访问A任务是无法实现的。</p>
+<h3 id="基于用户">基于用户</h3>
+<p>在这种系统中要为单个用户分配权限，在这个系统当中用户与权限之间，任务与权限之间都是多对多的关系。<br>几种具体的实现方式：<br>-复杂任务：在一个任务当中包含了增删改查的模式，访问一个任务，即包含了所有这些模式。<br>-在权限表中保存了对第一个任务的增删改查的yes/no的开关，这样主形成了一个crud矩阵。<br>-简单任务：第一种模式（crud）由每一个完全独立的任务来处理—不需要crud矩阵。<br>这种设计的不足是当多个用户都具有相同的权限时，一旦权限发生变化，每个用户都要进行单独的调整。</p>
+<h3 id="基于组">基于组</h3>
+<p>在这种模式当中用户被分成了不同的组，权限直接被分配到用户组，而不是单独的用户<br>这种设计的好处是：<br>-对用户组的任何修改都将被该组的所有用户继承<br>-改变用户的权限非常容易，因为只有一张权限表需要维护<br>-如果一个用户改变了他的分组，那么它将和以前的分组没有任何联系。</p>
+<h3 id="基于职责">基于职责</h3>
+<p>这种设计可以实现一个用户同时属于一个或多个分组。<br>用户组表有时也被称为职责区域，因为个体用户可能有多个职责。<br>这种设计的不足：<br>-只能通过链接到另一个分组来给用户增加权限，而不能撤消已有分组的权限<br>-为了让一个用户访问一个任务需要，需要维护两张表USER-USER-GROUP表和TASK-USER-GROUP表</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/11/07/常见的访问控制实现方式/" data-id="3klgsyv92xdtrap3" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabc/">rabc</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/权限管理/">权限管理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/访问控制/">访问控制</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-rabc的基本概念" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/11/07/rabc的基本概念/" class="article-date">
+  <time datetime="2014-11-07T07:10:34.000Z" itemprop="datePublished">11月 7 2014</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/权限设计/">权限设计</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/11/07/rabc的基本概念/">rabc的基本概念</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>rbac能够实现限制只有认证用户才能访问系统的效果。主要用在有超过500名员工的企业中。超过500名员工，可以实现强制访问控制—mandatory access control(MAC) 或者<br>自主访问控制—discretionary access control(DAC).RBAC有时被简称为基于角色的安全性。<br>在一个组织内，角色有多种功能。给不同的角色分配不同的执行权限。会员或者工作人员（或者其他系统用户）都被赋给特定的角色，并且通过角色分配获得执行特定操作的权限。不能直接为用户分配权限，用户只能通过他们的角色获得不同的权限，对个人用户权限的管理变成了给用户账户分配适合的角色；这简化了常见的操作，比如添加用户，或者改变用户的部门。<br>为RBAC定义三种主要规则<br>角色分配：只有给主体分配了角色，主要才有相应的权限许可。<br>角色授权：主体的角色必须经过授权，这条规则用来确认主体被分配的角色是经过授权的。<br>许可授权：只有当一个许可授权给了主体的角色，主体才能行使这个权限，这条规则用来确认用户只能行使被授权的权限。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/11/07/rabc的基本概念/" data-id="w9lhwsxcqrkxnatz" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabc/">rabc</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/权限管理/">权限管理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/访问控制/">访问控制</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-基于角色的访问控制--Role-based access contrl" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/11/07/基于角色的访问控制--Role-based access contrl/" class="article-date">
+  <time datetime="2014-11-07T07:06:34.000Z" itemprop="datePublished">11月 7 2014</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/权限设计/">权限设计</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/11/07/基于角色的访问控制--Role-based access contrl/">通过sql构建基于角色的访问控制</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近，一些文章让我感受到通过orm与数据库打交道是多么的有趣和方便。由于一些原因，它们既是开发人员的最爱，又是数据库管理员的恶梦（想想代理主键）。但是用一致的列设计表有它的好处。那些没有内在意义的元数据列，并不代表他们没有价值。在这上系列的文章中，我将向你展示用这些“毫无意义”的元数据实现强大的，用效的应用程序级基于角色的访问控制（通过数据库实现。虽然你可以把它用到任何应用当中，但是我们这里重点关注web应用。<br>
+        
+          <p class="article-more-link">
+            <a href="/2014/11/07/基于角色的访问控制--Role-based access contrl/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/11/07/基于角色的访问控制--Role-based access contrl/" data-id="o9mb6odxkoamgvtj" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabc/">rabc</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/权限管理/">权限管理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/访问控制/">访问控制</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+  
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/权限设计/">权限设计</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/drupal7模块开发/">drupal7模块开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rabc/">rabc</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/权限管理/">权限管理</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/访问控制/">访问控制</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/drupal7模块开发/" style="font-size: 10.00px;">drupal7模块开发</a><a href="/tags/rabc/" style="font-size: 20.00px;">rabc</a><a href="/tags/权限管理/" style="font-size: 20.00px;">权限管理</a><a href="/tags/访问控制/" style="font-size: 20.00px;">访问控制</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">November 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2014/11/07/常见的访问控制实现方式/">几种常见的访问控制实现方式</a>
+          </li>
+        
+          <li>
+            <a href="/2014/11/07/rabc的基本概念/">rabc的基本概念</a>
+          </li>
+        
+          <li>
+            <a href="/2014/11/07/基于角色的访问控制--Role-based access contrl/">通过sql构建基于角色的访问控制</a>
+          </li>
+        
+          <li>
+            <a href="/2014/11/02/正则表达式/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2014/10/25/ssh管理命令/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+    </div>
+  </div>
+</footer>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"ecshoptpl"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">文章</a>
+  
+</nav>
+    
+
+<script src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+
+  </div>
+</body>
+</html>

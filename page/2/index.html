@@ -3,39 +3,17 @@
 <head>
   <meta charset="utf-8">
   
-  <title>第一个drupal模块 | Drupal &amp; Ecshop</title>
+  <title>Drupal &amp; Ecshop</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="目标
-我们的第一模块将实现以下功能：通过一个区块，展示出已经启用的模块列表。我们将分三步实现这个完成这个模块：
-
-建立模块目录和模块文件
-建立区别
-利用drupal中的SimpleTest框架写一个自动测试
-
-按照敏捷开发的思想，我们应该先写测试，但是为了简单起见，我们采用了上面的流程.不管怎么样，我们的目标是说明如何写一个模块，而不是演示具体的开发方法。我们这样做会更简单一些，这主要有两个原因：">
-<meta property="og:type" content="article">
-<meta property="og:title" content="第一个drupal模块">
-<meta property="og:url" content="http://www.ecshoptpl.com/2014/09/09/第一个drupal模块/">
+  <meta name="description">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Drupal & Ecshop">
+<meta property="og:url" content="http://www.ecshoptpl.com/page/2/">
 <meta property="og:site_name" content="Drupal & Ecshop">
-<meta property="og:description" content="目标
-我们的第一模块将实现以下功能：通过一个区块，展示出已经启用的模块列表。我们将分三步实现这个完成这个模块：
-
-建立模块目录和模块文件
-建立区别
-利用drupal中的SimpleTest框架写一个自动测试
-
-按照敏捷开发的思想，我们应该先写测试，但是为了简单起见，我们采用了上面的流程.不管怎么样，我们的目标是说明如何写一个模块，而不是演示具体的开发方法。我们这样做会更简单一些，这主要有两个原因：">
-<meta property="og:image" content="http://forpages.qiniudn.com/module_dir.jpg">
+<meta property="og:description">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="第一个drupal模块">
-<meta name="twitter:description" content="目标
-我们的第一模块将实现以下功能：通过一个区块，展示出已经启用的模块列表。我们将分三步实现这个完成这个模块：
-
-建立模块目录和模块文件
-建立区别
-利用drupal中的SimpleTest框架写一个自动测试
-
-按照敏捷开发的思想，我们应该先写测试，但是为了简单起见，我们采用了上面的流程.不管怎么样，我们的目标是说明如何写一个模块，而不是演示具体的开发方法。我们这样做会更简单一些，这主要有两个原因：">
+<meta name="twitter:title" content="Drupal & Ecshop">
+<meta name="twitter:description">
 
   
   
@@ -82,7 +60,74 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-第一个drupal模块" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main">
+  
+    <article id="post-git的安装开发配置" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/09/15/git的安装开发配置/" class="article-date">
+  <time datetime="2014-09-15T12:54:34.000Z" itemprop="datePublished">9月 15 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/09/15/git的安装开发配置/">git安装配置</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Git是一种分布式版本控制和源码管理系统，不论是个人写代码还是团队协作，git都能给我们的开发带来很大的便利。而github就是一个最流行的git存取站点，而且它还提供了社交化软件开发功能。</p>
+<h1 id="git">git</h1>
+<p>我们将使用git作为drupal模块开发过程中的版本控制工具，因为drupal官方就是用git做源码管理，我们在开发使用git,会方便我们以后将模块提交给drupal.</p>
+<h2 id="git安装">git安装</h2>
+<p><div class="video-container"><iframe src="//forpages.qiniudn.com/2013-3-12-git.mp4" frameborder="0" autostart="false" allowfullscreen></iframe></div><br>yum install git<br>apt-get install git<br><a href="http://msysgit.github.io" target="_blank" rel="external">http://msysgit.github.io</a></p>
+<h2 id="git配置">git配置</h2>
+<p>在安装完git以后，要进行的基本配置有下面几个：<br>1.配置用户信息<br>git config —global user.name “your name”<br>git config —global user.email yourname@example.com</p>
+<p>2.颜色配置，这个在windows的效果不是很好<br>git config —global color.ui auto</p>
+<p>3.配置文件的作用域<br>/etc/gitconfig 对所有用户有效<br>~/.gitconfig 对当前用户有效<br>{工作目录}/.git/config 仅对当前项目有效</p>
+<p>$HOME 或者 C:Documents and Settings$USER 下的.gitconfig<br>git安装目录下的/etc/gitconfig</p>
+<p>4.配置要忽略的文件（.gitignore）,往往在项目中我们有许多文件不需要进行版本控制，像有些临时文件，图片文件，缓存文件等.</p>
+<ul>
+<li>gitignore文件格式:</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor"># 以'#'开始的行，被视为注释.</span></div><div class="line"><span class="preprocessor"># 忽略掉所有文件名是 foo.txt的文件.</span></div><div class="line">foo.txt</div><div class="line"></div><div class="line"><span class="preprocessor"># 忽略所有生成的 html文件,</span></div><div class="line">*.html</div><div class="line"></div><div class="line"><span class="preprocessor"># foo.html是手工维护的，所以例外.</span></div><div class="line">!foo.html</div><div class="line"></div><div class="line"><span class="preprocessor"># 忽略所有.o和 .a文件.</span></div><div class="line">*.[oa]</div></pre></td></tr></table></figure>
+
+
+<ul>
+<li>gitignore的作用范围<br>— 全局有效的配置</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git config --<span class="keyword">global</span> core.excludesfile ~/.gitignore</div></pre></td></tr></table></figure>
+
+<p>做完上边的配置之后，我们要在home目录建一个.gitigore文件，这个文件将对所有项目有效。如果项目需要上传到git服务器，gitignore的配置不会上传。</p>
+<p>— 局部有效的配置<br>直接在项目目录下建立.gitignore文件即可，同时这个文件也会被git跟踪，并跟随项目保存到服务器，也可以在这个文件中加入一行.gitignore，将其本身忽略。</p>
+<p>— 注意<br>对于已经commit的文件，gitignore不会对它们起作用，需要先从版本库中删除，再添加。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="preprocessor">#删除版本库中的文件</span></div><div class="line">git rm test.txt</div><div class="line">git commit -m <span class="string">"remove test.txt"</span></div></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/09/15/git的安装开发配置/" data-id="9iemdkaibyca0wog" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-第一个drupal模块" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2014/09/09/第一个drupal模块/" class="article-date">
   <time datetime="2014-09-09T00:15:03.000Z" itemprop="datePublished">9月 9 2014</time>
@@ -95,8 +140,8 @@
       <header class="article-header">
         
   
-    <h1 class="article-title" itemprop="name">
-      第一个drupal模块
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/09/09/第一个drupal模块/">第一个drupal模块</a>
     </h1>
   
 
@@ -174,39 +219,130 @@
     </footer>
   </div>
   
-    
-<nav id="article-nav">
-  
-    <a href="/2014/09/15/git的安装开发配置/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          git安装配置
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2014/09/08/drupal开发工具/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">drupal开发工具</div>
-    </a>
-  
-</nav>
+</article>
 
+
+
+
+  
+    <article id="post-drupal开发工具" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/09/08/drupal开发工具/" class="article-date">
+  <time datetime="2014-09-08T13:36:11.000Z" itemprop="datePublished">9月 8 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/09/08/drupal开发工具/">drupal开发工具</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="drush">drush</h3>
+<p>drush是一个关于drupal的命令行工具，它可以让我们通过命令行的方式更方便的完成页面操作。最简单的比如：下载模块，清除缓存，修改主题等等。</p>
+<h4 id="drush的安装">drush的安装</h4>
+<p>drush有多种安装方式，我们这里只介绍windows下的安装，如果大家想了解drush的其它方式或详细情况，可以访问它的官网，或者<a href="https://github.com/drush-ops/drush" target="_blank" rel="external">github</a></p>
+<ul>
+<li>到<a href="http://www.drush.org/drush_windows_installer" target="_blank" rel="external">http://www.drush.org/drush_windows_installer</a>下载drush安装包.</li>
+<li>像其它的windows程序的安装一样，直接下一步就可以完成安装。</li>
+<li>在安装完成以后可以通过Drush Command Prompt来运行drush命令，如果想在命令行运行drush需要将drush的目录注册到系统的环境变量当中。<h4 id="drush的常用命令">drush的常用命令</h4>
+drush有很多功能可以简化我们的操作，下面只是列出一些经常用到的，具体的大家可以到<a href="http://www.drush.org" target="_blank" rel="external">官网</a>查阅。</li>
+<li>drush dl devel&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;                下载devel模块</li>
+<li>drush dl devel —select       下载指定版本的devel模块</li>
+<li>drush en devel&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;                启用devel模块</li>
+<li>drush en deval —yes&ensp;          启用devel模块，启用过程中无需确定</li>
+<li>drush dis devel&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;               停用devel模块          </li>
+<li>drush up drupal&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;              升级drupal核心</li>
+<li>drush up devel&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;                更新devel模块</li>
+<li>drush cc&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;                      清除缓存<h3 id="编辑器与IDE">编辑器与IDE</h3>
+在[这个]页面上列出了一些常见的文本编辑器和IDE用来开发drupal需要进行的一些配置，你可以选择自己常用的编辑器或者IED，按照相关的教程进行一些必要的设置。这样可以使你的工具更加适合drupal的开发，比如缩进，实例，代码片断，代码风格等，这样能让你的代码更加的规范。<br>下面我们以vim为例简单介绍一下编辑器的一些设定。</li>
+<li>如果是在windows上面，可以去<a href="http://www.vim.org/download.php" target="_blank" rel="external">http://www.vim.org/download.php</a>下载安装gvim，安装完成后需要把gvim的执行目录，添加到时系统环境变量。</li>
+<li>利用我们上边安装的drush，来安装drupal for vim插件。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">drush @none dl vimrc</div><div class="line">drush <span class="operator"><span class="keyword">help</span> vimrc-<span class="keyword">install</span></span></div><div class="line">drush -v vimrc-<span class="keyword">install</span></div></pre></td></tr></table></figure>
+
+<p>这个插件已经把我们需要修改的一些设置已经做完了，并且添加了代码高亮等功能。具体使用方法可去<a href="https://www.drupal.org/node/1389006" target="_blank" rel="external">这个</a>页面查看。<br><img src="http://forpages.qiniudn.com/vimrc_project.png" alt="vim效果图"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/09/08/drupal开发工具/" data-id="c2fb2szgoqvuyrmx" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
   
 </article>
 
 
 
-<section id="comments">
-    <div id="disqus_thread">
-<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2014/09/09/第一个drupal模块/" data-title="第一个drupal模块" data-url="http://www.ecshoptpl.com/2014/09/09/第一个drupal模块/"></div>
-<!-- 多说评论框 end -->
-  </div>
-</section>
 
+  
+    <article id="post-drupal-module-development-intro" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/09/04/drupal-module-development-intro/" class="article-date">
+  <time datetime="2014-09-04T12:39:47.000Z" itemprop="datePublished">9月 4 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/09/04/drupal-module-development-intro/">drupal7模块开发--概述</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>drupal</strong>从2000年发展至今，已经成为非常成熟和完善的开源框架，它不仅有着极其丰富的功能框架和模板，更加重要的是除了软件本身，它的社区和运作机制已经非常完善。在这个过程中，drupal也变得越来越庞大和复杂。使学习者要想掌握它，需要学习的东西也越来越多。下面我我们就来梳理一下drupal当中最重要的部分有哪些：<br>-<strong>钩子系统</strong>:<br>-<strong>核心模块</strong>:<br>-<strong>数据库抽象层</strong>:<br>-<strong>菜单路由系统</strong>:<br>-<strong>节点</strong>:<br>-<strong>文件</strong>:<br>-<strong>用户</strong>:<br>-<strong>字段与实体</strong>:<br>-<strong>表单系统</strong>:<br>-<strong>测试开发</strong>:<br>-<strong>区块</strong>:<br>-<strong>其他</strong>:</p>
+<p>为什么要学习drupal模块开发？</p>
+<ol>
+<li><p>在学习过程中可以提高自己的技术水平。<br> 通过不断深入接触drupal能够使我们对它的设计思想有更深入的了解，而且它的模块包括的范围非常广泛，我们能够接触到drupal之外的许多新技术，像webservers, redis缓存， 安全认证等等，都在drupal的模块中有所提现。<br> 而且drupal有着非常规范的代码标准，这也能使我们在学习过程中，使自己写的代码更加规范，在模块开发过程中我们还会应用过版本控件，功能测试等良好的开发习惯。</p>
+</li>
+<li><p>可以使我们更加灵活高效的应对用户的各种需求。<br> drupal的模块虽然已经非常的多，已经能够满足我们大多数的功能需求，可是这并能保证我们的项目，可以完全用别人的模块来完成，而且很多时候即使我们可以使用第三方的模块，但这并不一定能达到最佳的效果。</p>
+</li>
+<li><p>真正了解开源软件的意义。<br> 开源并不是简单的开放源代码，而且一种“开放”， “共享”， “协作”的运作模式，除了代码，人们之间如何相互协作也是值得我们学习和思考的。<br> 我们不仅是从社区获取需要的模块和帮助，我们也是社区的贡献者。我们可以从提交bug, 问题反馈，回答问题，提供补丁和代码的过程中，真正融入到开源社区，体现自身价值。</p>
+</li>
+</ol>
+<p>当然，drupal本身也存在诸多问题，但这也正好给了我们去完善它的机会，如果你对开源软件感兴趣，可以尝试一下drupal.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/09/04/drupal-module-development-intro/" data-id="55ltqmf9k2xwjcc4" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/drupal7模块开发/">drupal7模块开发</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+  
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    </nav>
+  
 </section>
         
           <aside id="sidebar">

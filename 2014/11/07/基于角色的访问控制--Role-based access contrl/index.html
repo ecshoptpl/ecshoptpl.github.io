@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>通过sql构建基于角色的访问控制 | Drupal &amp; Ecshop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近，一些文章让我感受到通过orm与数据库打交道是多么的有趣和方便。由于一些原因，它们既是开发人员的最爱，又是数据库管理员的恶梦（想想代理主键）。但是用一致的列设计表有它的好处。那些没有内在意义的元数据列，并不代表他们没有价值。在这上系列的文章中，我将向你展示用这些“毫无意义”的元数据实现强大的，用效的应用程序级基于角色的访问控制（通过数据库实现。虽然你可以把它用到任何应用当中，但是我们这里重点关">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过sql构建基于角色的访问控制">
+<meta property="og:url" content="http://www.ecshoptpl.com/2014/11/07/基于角色的访问控制--Role-based access contrl/">
+<meta property="og:site_name" content="Drupal & Ecshop">
+<meta property="og:description" content="最近，一些文章让我感受到通过orm与数据库打交道是多么的有趣和方便。由于一些原因，它们既是开发人员的最爱，又是数据库管理员的恶梦（想想代理主键）。但是用一致的列设计表有它的好处。那些没有内在意义的元数据列，并不代表他们没有价值。在这上系列的文章中，我将向你展示用这些“毫无意义”的元数据实现强大的，用效的应用程序级基于角色的访问控制（通过数据库实现。虽然你可以把它用到任何应用当中，但是我们这里重点关">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="通过sql构建基于角色的访问控制">
+<meta name="twitter:description" content="最近，一些文章让我感受到通过orm与数据库打交道是多么的有趣和方便。由于一些原因，它们既是开发人员的最爱，又是数据库管理员的恶梦（想想代理主键）。但是用一致的列设计表有它的好处。那些没有内在意义的元数据列，并不代表他们没有价值。在这上系列的文章中，我将向你展示用这些“毫无意义”的元数据实现强大的，用效的应用程序级基于角色的访问控制（通过数据库实现。虽然你可以把它用到任何应用当中，但是我们这里重点关">
+
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+  
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Drupal &amp; Ecshop</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">drupal模块开发 ecshop二次开发</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">文章</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="submit" value="&#xF002;" class="search-form-submit"><input type="hidden" name="q" value="site:http://www.ecshoptpl.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-基于角色的访问控制--Role-based access contrl" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/11/07/基于角色的访问控制--Role-based access contrl/" class="article-date">
+  <time datetime="2014-11-07T07:06:34.000Z" itemprop="datePublished">11月 7 2014</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/权限设计/">权限设计</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      通过sql构建基于角色的访问控制
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近，一些文章让我感受到通过orm与数据库打交道是多么的有趣和方便。由于一些原因，它们既是开发人员的最爱，又是数据库管理员的恶梦（想想代理主键）。但是用一致的列设计表有它的好处。那些没有内在意义的元数据列，并不代表他们没有价值。在这上系列的文章中，我将向你展示用这些“毫无意义”的元数据实现强大的，用效的应用程序级基于角色的访问控制（通过数据库实现。虽然你可以把它用到任何应用当中，但是我们这里重点关注web应用。<br><a id="more"></a><br>由于我写的这个系统有些复杂，我将分为两个篇幅去介绍。在第一篇文章中将讨论我所接触过的一些web应用中的权限系统，包括访问控制列表（ACL），然后介绍一个我目前在用的简化版的权限系统，它更加复杂和强大。在这过过程中，我会讲解如何去添加或删除特性和复杂性，以便使你的应用达到权限控制的平衡和简单。<br>我的目标是通过介绍我自己的权限系统，使你学会开发自己的权限系统，而不用像我这样花几年时间来学习怎么做。我会给出模式案例和查询功能。</p>
+<h1 id="导言">导言</h1>
+<p>当人们想到安全系统，如果他们熟悉计算机和相关安全问题，他们首先想到的通过是访问控制列表。不同的人对此有不同的看法，这个其中一种。虽然有一些标准，但是没有得到所有人的认可，包括什么是真正的ACL、它们应该怎么工作的看法上不同的人有很大的差异。<br>这篇文章的内容是关于通过数据库实现一个表格的ACL，来定义一个用户对于数据的权限。这不是sql权限，而是通过数据表和查询来实现你的应用的安全模式。这篇文章也不是关于鉴权的，而是关于授权的。你的系统应该已经能够去认证一个用户。<br>在这篇文章当中我会用到一些术语。“权限（Privilege)”和“认可（Permission)”通过指的是一回事。我假定你的应用使用ORM，“对象（object）”和“行（row<br>）”是同一个东西的两种表现形式（在代码中它是对象，在数据库中它就是一行数据）。一个对象的类型或者类可以对应到一行数据所在的表。这个类可能和表<br>使用相同的名字。最后,角色（role)和组(group)是很相似的，但它们并不相同，一个组是一角色，角色是组的超集。</p>
+<h1 id="系统需求">系统需求</h1>
+<p>在本文中介绍的系统，是在过去几年中积累出来的，它是以管理我的大学里边的一个越来越复杂的会员网站为驱动的。在我发现这个优雅的方式之前，访问控<br>制一直都是系统的致命伤。这个系统最大的优点就是允许我们使用基于角色的权限控制，从而通过数据库中第一行去执行行级权限。细粒度、高度集成是权限<br>控制的一个目标。事实上，在网站当中ACL是非常普遍的，用户界面就是用来问数据库“这个用户在这儿能做什么？”，执行的结果会告诉网站，用户应该看到什么。另一个设计的目标是可扩展性。不管数据库中有多少行，复杂性和性能应该保持不变。<br>我的设计有以下核心特征，有些会放到下一篇文章当中：<br>1。用户单独定义。<br>2。用户可以属于一个或多个角色。<br>3。角色能够被授予执行动作的许可。<br>4。权限能够定义在单个对象上，以及类和对象的集合。<br>5。内置的缺省值可以操控几乎所有的权限，ACL条目只需重写或增强这些缺省值。<br>6。行为不是静态的；我可以定义我需要的任何行为。系统包含行为定义，以及定义它们应用到的对象类型。<br>我省略了一些其它系统中常见的特性。像有能力拒绝权限，权限继承树。我从来没有见过在角色设定正确的情况下，需要否认的权限。在关系系统当中，继承<br>常常让事情变的更复杂，也会让关系系统的效率降低，因此我的系统完全没有继承。</p>
+<h1 id="我的设计解决什么问题？">我的设计解决什么问题？</h1>
+<p>我见过的大多数权限系统，比如：控制相册，公告板，共享日历等，都不是非常细的料度。他们通常采用的形式就是，在数据表中定义用户、组，以及它们之间的映射。在用户组的表中一般用一些列定义应用当有用到的权限。比如你可能见过下面这样的用户组表<br>+———-+——————+——————+<br>| group | can_delete | can_update |<br>+———-+——————+——————+<br>| admin | 1          | 1          |<br>| user  | 0          | 1          |<br>+———-+——————+——————+</p>
+<h2 id="程序代码类似是这们：">程序代码类似是这们：</h2>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> ( <span class="variable">$user</span><span class="variable">-&gt;is_in_group</span>(<span class="string">"admin"</span>) ) {</div><div class="line">   <span class="variable">$message</span><span class="variable">-&gt;delete</span>();</div><div class="line">}</div><div class="line"><span class="keyword">else</span> {</div><div class="line">   print_error(<span class="string">"Sorry, you can't delete messages."</span>);</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">if</span> ( <span class="variable">$user</span><span class="variable">-&gt;is_in_group</span>(<span class="string">"users"</span> || <span class="variable">$user</span><span class="variable">-&gt;is_in_group</span>(<span class="string">"officers"</span>) ) {</div><div class="line">   <span class="comment">// display some link here... ad nauseum</span></div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>看起来是不是很熟悉？很多应用开始的时候都是这么做的，但是当应用变大的时候，我保证它会变成一场灾难。我以前曾经写的“关注分离”的文章，例如，现在的web开发者都知道把css从网页的内容当中分离出来。把你的权限权限系统和其它代码逻辑进行分<br>分离也是一件不错的事情。</p>
+<p>上面代码的问题在于，这个代码是在问“admin”这个用户是在哪个组，然后决定是否让它删除信息。这不是一个好办法。代码应该去问它需要做的事情（删除信息）的权限，<br>并且让权限系统决定是否有这个权限。代码不应该知道什么用户组有什么权限，因为那<br>样的话权限当中的任何变化，都需要代码做出相应的变化，使系统变的非常脆弱（难<br>改变， 易于破坏）。这可看起来好像不是那么重要，但是随着时间的推移，逻辑和权限的分离会变的至关重要。你的代码是否涉及到了一个用户组，这就体现出了你的代码<br>是否进行了很好的分离。如果你有一些像if ( $user-&gt;is_in_group(“admin”) )这样的<br>代码，那说明你的代码还存在问题。如果现在还看不到有什么严重的问题，过一段时间<br>你就会看到:-)</p>
+<p>一些web应用框架，像cakePHP,使用了更传统的ACL，phpGACL则是一个通用访问控制列表的php实现。</p>
+<p>以前人们已经建立了非常好权限系统，但是当我开始建立网站的时候，并没有在网上搜到<br>这方面的内容。即使今天关于这方面的信息也是相对比较少的。为什么会这样？我认<br>为主要因为要做好这个是非常困难的。如果你是一个系统程序员，或者你做的是系统<br>安全工作，你可以接触过它（特别是POSIX标准），但是大多数web应用开发者都没有<br>接触过，而且坦白的说，有些事情大多数人做的不是很好。</p>
+<p>我知道，因为我第一次就没有做好（当你读完这个文章以后，你可能觉得我现在也没有做好），开始的时候我用了大量的代码查询数据库，递归调用，if嵌套<br>。这种方式很慢，占用了大量的内存和cpu,数据库中的数据也越来越多，对我来说它太复杂了。实事上，在我没有设计这个系统之前，我已经发现一些bug</p>
+<p>最后的结果是，我的设计解决了下面这些问题（至少对我来说是这样）</p>
+<p>1。它支持表级别和行级别的控制。<br>2。它保持代码和权限的分离。<br>3。它很容易实现。<br>4。它有良好的性能和可扩展性。</p>
+<h1 id="如何让你的权限系统小、快？">如何让你的权限系统小、快？</h1>
+<p>诀窍就是问不同的问题。传统的ACL会问“给出的这个用户（ARO,或者说访问请求对象），这个对象（ACO,访问控制对象），这个用户能不能做什么什么？”得<br>到这个答案，需要多少工作，依赖于很多因素。如果你想问另外一个动作，你通常需要再调用一次ACL系统。而我当前的系统问的是“按照这一行，这个用户<br>能够做什么？”答案是得到用户能做的所有事情，并缓存这次调用。</p>
+<p>为了帮助减少额外的数据，我的系统模型采用了UNIX风格。它不仅是一个很强大的模型，而且对大多数人来说，它是很熟悉的，这也使它比较容易理解和管理</p>
+<p>下面是它与UNIX的一些相似之处：<br>1。每个对象（表中的一行）属于一个用户和一个组。<br>2。用户可以属于多个组。<br>3。权限能够被分配给一行的所有者，或者是这一行的组所有者。<br>4。权限不仅能够授权给行，还能授权给表（在UNIX，权限可能分配到文件和目录）。<br>5。root组可能做任何事。<br>6。默认情况下，一个对象（行）拥有自身的读/写/删除最小权限集，对于大多数普通任务来说，这是足够的。<br>7。读/写/删除的最小权限可能指定给用户，组和其它，就像UNIX中那样。<br>8。列的默认值类似于UNIX当中的粘滞位。</p>
+<p>还有一些是与unix的不同之处，具体的会在下一篇文章中介绍<br>1。没有primary和secondary组，所有的组成员都是平等的。<br>2。权限依赖于对象的类型（例如，它存储在哪张表）。<br>3。用户和ACL都是对象，和其它对象一样，因为它们都是存储在数据库中的一行数据。<br>4。就你我上边说的，行和表都可以被授权，也可能在一个表中给所有表一类特殊的权限，不是行自身，也不是表自身，而是从本质上扩展对象或者类的权限。<br>5。权限可以根据外部因素而定。比如对象的状态。<br>6。大多数人认为用户组和角色是一样的，但是在我的系统中是不完全一样的。角色的类型是可以被定义的，不会直接关联到组</p>
+<h1 id="数据库架构">数据库架构</h1>
+<p>我们先从一个简单的行访问控制系统开始（在下篇文章中你将看到如何对表进行控制）<br>。我的系统平等地对待每一行，这要求每张表有一些扩展字段来支持ACL。</p>
+<p>在这篇文章中我将使用t<em>作为表前缀，c</em>作为列前缀。在我们的例子中，我将使用mysql数据库，当然你也可以使用其它数据库。下面是基本的表结构：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="operator"><span class="keyword">create</span> <span class="keyword">table</span> t_foo (</span></div><div class="line">    c_uid             <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span> auto_increment <span class="keyword">primary</span> <span class="keyword">key</span>,</div><div class="line">    c_owner           <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="number">1</span>,</div><div class="line">    c_group           <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="number">1</span>,</div><div class="line">    c_unixperms       <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="number">500</span>,</div><div class="line">    <span class="comment">-- other columns ...</span></div><div class="line">);</div></pre></td></tr></table></figure>
+
+<p>你的每一张表中都需要这些列。下面我解释一下这几个字段。<br>1。c_uid 是每一行的主键或者代理键。<br>2。c_owner 是行所有者的ID，它对应于t_user表中的c_uid.<br>3。c_group 定义对象所属的组，就像我上边讲的，这个字段很容易让人产生困惑，对此我会在后面进行解释。<br>4。定义对象的unix风格（读/写/删除）权限。</p>
+<h1 id="组和组成员">组和组成员</h1>
+<p>组可以定义在数据库当中，但是在实践中我发现它是比较固定的，在代码中进行枚举比在数据库中遍历表更好一些，那样每次请求都要到数据库中取出用户组的相关数据。<br>在php当中，通常这样定义：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$groups</span> = <span class="keyword">array</span>(</div><div class="line">   <span class="string">"root"</span>          =&gt; <span class="number">1</span>,</div><div class="line">   <span class="string">"officer"</span>       =&gt; <span class="number">2</span>,</div><div class="line">   <span class="string">"user"</span>          =&gt; <span class="number">4</span>,</div><div class="line">   <span class="string">"wheel"</span>         =&gt; <span class="number">8</span></div><div class="line">);</div></pre></td></tr></table></figure>
+
+<p>注意这些值都是2的平方，这是因为我要使用一些位运算对组进行查询。这样可以确保<br>用户组的数字是可以转换为二进制的整数。从简单和速度的角度来看，这种限制是很有<br>用的（我在定义一个权限系统的时候，从来不需要超过8个分组，就可以实现很好的控<br>制粒度，而一个无符号的整数可以允许32个分组）。在这里需要注意的是分组和角色没<br>有一一对应的关系，所以这个设计完全不限制你的角色使用二进制数。</p>
+<p>一行中的c_group列存放的是这行所属于的分组的组ID，如果这一行属于officer组，它的值就是2。</p>
+<p>一个用户的组成员的身份将会进行不同的处理。由于组ID是二进制数，它们能够封装到<br>一个整数当中。这个存储在t_user表的c_group_memberships列上。这种反常的设计，减少了系统中的复杂性和数据，也使查询更加有效率。</p>
+<p>人们常常对组成员感到困惑，因为t_user表也有一个c_group列，但是它和用户是哪个<br>组的成员一点关系也没有；它存储这个用户属于的组。</p>
+<p>一个用户在“root”和“user”两个组当中，它的c_group_memberships的值就是5。</p>
+<h1 id="unxi风格的读/写/删权限">unxi风格的读/写/删权限</h1>
+<p>unxi风格的读/写/删权限被定义在另外的数组当中，并且被封装在每一行的c_unixperm列</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$permissions</span> = <span class="keyword">array</span>(</div><div class="line">   <span class="string">"owner_read"</span>   =&gt; <span class="number">256</span>,</div><div class="line">   <span class="string">"owner_write"</span>  =&gt; <span class="number">128</span>,</div><div class="line">   <span class="string">"owner_delete"</span> =&gt; <span class="number">64</span>,</div><div class="line">   <span class="string">"group_read"</span>   =&gt; <span class="number">32</span>,</div><div class="line">   <span class="string">"group_write"</span>  =&gt; <span class="number">16</span>,</div><div class="line">   <span class="string">"group_delete"</span> =&gt; <span class="number">8</span>,</div><div class="line">   <span class="string">"other_read"</span>   =&gt; <span class="number">4</span>,</div><div class="line">   <span class="string">"other_write"</span>  =&gt; <span class="number">2</span>,</div><div class="line">   <span class="string">"other_delete"</span> =&gt; <span class="number">1</span></div><div class="line">);</div></pre></td></tr></table></figure>
+
+<p>如果一行中的c_unixperms列的值是500（十进制）二进制值就是111110100，它的意思也就是说，按照由高到低的有效比特位，所有者（owner)可以读、写、删除；拥有者组<br>的成员可以读和写，其它用户只能读。如果你了解UNIX的权限系统，你可能对些会有熟悉。</p>
+<h1 id="示例架构">示例架构</h1>
+<p>这时候示例数据是很有帮助的，所有我写了一个小的架构，并加进了一些数据以方便查询，下面是代码：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="operator"><span class="keyword">drop</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">exists</span> t_user;</span></div><div class="line"><span class="operator"><span class="keyword">create</span> <span class="keyword">table</span> t_user (</span></div><div class="line">   c_uid             <span class="built_in">int</span>             <span class="keyword">not</span> <span class="literal">null</span> auto_increment <span class="keyword">primary</span> <span class="keyword">key</span>,</div><div class="line">   c_owner           <span class="built_in">int</span>             <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="number">1</span>,</div><div class="line">   c_group           <span class="built_in">int</span>             <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="number">1</span>,</div><div class="line">   c_unixperms       <span class="built_in">int</span>             <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="number">500</span>,</div><div class="line">   c_username        <span class="built_in">varchar</span>(<span class="number">50</span>)     <span class="keyword">not</span> <span class="literal">null</span>,</div><div class="line">   c_group_memberships <span class="built_in">int</span>           <span class="keyword">not</span> <span class="literal">null</span></div><div class="line">);</div><div class="line"></div><div class="line"><span class="operator"><span class="keyword">insert</span> <span class="keyword">into</span> t_user (c_username, c_group_memberships)</span></div><div class="line">   <span class="keyword">values</span>(<span class="string">'root'</span>, <span class="number">1</span>), (<span class="string">'xaprb'</span>, <span class="number">4</span>), (<span class="string">'sakila'</span>, <span class="number">5</span>);</div><div class="line"></div><div class="line"><span class="operator"><span class="keyword">drop</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">exists</span> t_event;</span></div><div class="line"><span class="operator"><span class="keyword">create</span> <span class="keyword">table</span> t_event (</span></div><div class="line">   c_uid             <span class="built_in">int</span>             <span class="keyword">not</span> <span class="literal">null</span> auto_increment <span class="keyword">primary</span> <span class="keyword">key</span>,</div><div class="line">   c_owner           <span class="built_in">int</span>             <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="number">1</span>,</div><div class="line">   c_group           <span class="built_in">int</span>             <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="number">1</span>,</div><div class="line">   c_unixperms       <span class="built_in">int</span>             <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">default</span> <span class="number">500</span>,</div><div class="line">   c_description     <span class="built_in">varchar</span>(<span class="number">50</span>)     <span class="keyword">not</span> <span class="literal">null</span></div><div class="line">);</div><div class="line"></div><div class="line"><span class="operator"><span class="keyword">insert</span> <span class="keyword">into</span> t_event(c_owner, c_group, c_description) <span class="keyword">values</span></span></div><div class="line">   (<span class="number">1</span>, <span class="number">1</span>, <span class="string">'MySQL Camp'</span>), (<span class="number">1</span>, <span class="number">4</span>, <span class="string">'Microsoft Keynote'</span>);</div></pre></td></tr></table></figure>
+
+<h1 id="如何确定用户是否可以执行动作？">如何确定用户是否可以执行动作？</h1>
+<p>现在已经有了完全的数据，那么你可以开始查询一个用户是否被允许对一个对象执行操作。解决这个问题，需要以下信息：<br>-用户的ID和组成员。<br>-要执行的操作的类型和标识。由于本文只涉及对象，你需要知道它所在的表，和它的c_uid.<br>-所需的动作（读、写、删）<br>我将以传统的ACL方式询问：用户X能不能对对象Z做Y？例如，如果用户‘xaprb’有权限去读‘MySQL Camp’<br>事件：<br>1。xaprb的用户ID是2，c_group_memberships是4。<br>2。事件的c_unixperms列是500，它授权了owner_read, owner_write, owner_delete, group_read, group_write, and other_read。<br>3。事件的c_owner列是1，所以xaprb不是这个对象的所有者，没有所有者的读、写、删权限。<br>4。事件的c_group列是1，xaprb不在这个组，因此也没有组的操作权限。<br>5。xaprb拥有‘other’角色（所有人都是）。所以other_read权限可以使用。</p>
+<p>因此，xaprb能够读这个事件。让我们看看‘sakila’能不能更新‘Microsoft Keynote’？<br>1。sakila 不是事件的拥有者，所以没有拥有者的权限可以使用。<br>2。sakila在组1和4，这个事件的拥有组是1，所以group_read and group_write可以使用。</p>
+<p>所以，sakila能够更新这个事件。</p>
+<p>因为权限被封装成了比特，你可以对它进行逻辑和位运算操作。假如$u是用户，$e是事件，下面的表达式可能判断用户是否以写这个事件：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$can_write</span></div><div class="line">   =  (( <span class="variable">$e</span><span class="variable">-&gt;owner</span> == <span class="variable">$u</span><span class="variable">-&gt;id</span> ) </div><div class="line">         && ( <span class="variable">$e</span><span class="variable">-&gt;unixperms</span> & <span class="variable">$permissions</span>[<span class="string">'owner_write'</span>] ))</div><div class="line">   || (( <span class="variable">$e</span><span class="variable">-&gt;group</span> & <span class="variable">$u</span><span class="variable">-&gt;group_memberships</span> )</div><div class="line">         && ( <span class="variable">$e</span><span class="variable">-&gt;unixperms</span> & <span class="variable">$permissions</span>[<span class="string">'group_write'</span>] ))</div><div class="line">   ||       ( <span class="variable">$e</span><span class="variable">-&gt;unixperms</span> & <span class="variable">$permissions</span>[<span class="string">'other_write'</span>] );</div></pre></td></tr></table></figure>
+
+<p>就这样，你也可以对读和删除的权限进行类似的计算，你可能想要写一个类方法来实现这样的功能，类似$u-&gt;can(‘write’, $e)。你不需要到数据库中去找数据，你的对象中<br>已经有了。</p>
+<h1 id="下一步是什么？">下一步是什么？</h1>
+<p>从这个简单的开始中，你已经看到了这个系统的强大。读、写和删除访问是目前用的最多的权限。仅仅通过模仿UNIX文件权限，我已经向你展示了如何通过很少的工作就实现了一些基础的功能。</p>
+<p>但是，以上并不是你最终确定权限的方案。就像我上边讲的，这样问问题的方式，不是可扩展的。你希望能够通过$privs = $e-&gt;permits($u)这种方式来问问题，并且一次得到所有的东西。我们将要实现的功能，包括了我们上边用到的东西，如果你实现了这样<br>的功能，只要对你的代码有用，这两种问问题的方式你可可以用。</p>
+<p>现在我们还没有做好这准备。它还将涉及有一些更复杂一点的东西，这些我不想在本文中介绍。下一篇文章将极大的扩展这个系统，解释我在本文中提到的其它功能。你刚刚在本文中看到的只是一个开始。我们还将讨论如何选择你需要的功能，对于速度与体积的优化。如何根据你自己的实际需求构建一个成熟的系统。</p>
+<p>最后，下一篇文章将介绍如何建立一个真正的基于角色的访问控制。目前我向你展示和还不是真正的基于角色的实现。你将看到如何将它重构成一个基于角色的范式。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.ecshoptpl.com/2014/11/07/基于角色的访问控制--Role-based access contrl/" data-id="o9mb6odxkoamgvtj" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabc/">rabc</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/权限管理/">权限管理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/访问控制/">访问控制</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/11/07/rabc的基本概念/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          rabc的基本概念
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/11/02/正则表达式/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+<section id="comments">
+    <div id="disqus_thread">
+<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/11/07/基于角色的访问控制--Role-based access contrl/" data-title="通过sql构建基于角色的访问控制" data-url="http://www.ecshoptpl.com/2014/11/07/基于角色的访问控制--Role-based access contrl/"></div>
+<!-- 多说评论框 end -->
+  </div>
+</section>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/权限设计/">权限设计</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/drupal7模块开发/">drupal7模块开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rabc/">rabc</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/权限管理/">权限管理</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/访问控制/">访问控制</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/drupal7模块开发/" style="font-size: 10.00px;">drupal7模块开发</a><a href="/tags/rabc/" style="font-size: 20.00px;">rabc</a><a href="/tags/权限管理/" style="font-size: 20.00px;">权限管理</a><a href="/tags/访问控制/" style="font-size: 20.00px;">访问控制</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">November 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2014/11/07/常见的访问控制实现方式/">几种常见的访问控制实现方式</a>
+          </li>
+        
+          <li>
+            <a href="/2014/11/07/rabc的基本概念/">rabc的基本概念</a>
+          </li>
+        
+          <li>
+            <a href="/2014/11/07/基于角色的访问控制--Role-based access contrl/">通过sql构建基于角色的访问控制</a>
+          </li>
+        
+          <li>
+            <a href="/2014/11/02/正则表达式/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2014/10/25/ssh管理命令/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+    </div>
+  </div>
+</footer>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"ecshoptpl"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">文章</a>
+  
+</nav>
+    
+
+<script src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+
+  </div>
+</body>
+</html>
